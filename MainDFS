@@ -1,0 +1,150 @@
+#define rep(i, N) for(int i = 0; i < N; i++)
+#define pii pair<int, int>
+#define row first
+#define col second
+#define rows 4
+#define cols 4
+#define V 5
+
+
+bool isValid(pii coord)
+{
+	if (coord.row < 0 or coord.col < 0 or coord.row >= rows or coord.col >= cols)
+		return false;
+	return true;
+}
+
+bool mazeDFS(int map[rows][cols], pii src, pii dst)
+{
+	map[src.row][src.col] = 2;
+
+	if (src.row == dst.row and src.col == dst.col)
+		return true;
+
+	pii dir[4]{ {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
+
+	rep(i, 4)
+	{
+		pii moveTo;
+		moveTo.row = dir[i].row + src.row;
+		moveTo.col = dir[i].col + src.col;
+		if(isValid(moveTo) and map[moveTo.row][moveTo.col] == 0)
+		{
+			if (mazeDFS(map, moveTo, dst))
+				return true;
+		}
+	}
+
+	map[src.row][src.col] = 0;
+	return false;
+}
+
+void printMap(int map[rows][cols])
+{
+	rep(i, rows)
+	{
+		rep(j, cols)
+			cout << map[i][j] << " ";
+		cout << endl;
+	}
+	cout << endl;
+}
+
+
+
+
+int mazeMain()
+{
+	int map[rows][cols]	{
+					{1, 1, 1, 0},
+					{0, 0, 1, 0},
+					{1, 0, 1, 0},
+					{1, 0, 0, 0} 
+	};
+
+	pii src;
+	pii dst;
+
+	src.row = 0, src.col = 3;
+	dst.row = 1, dst.col = 0;
+
+	printMap(map);
+
+	if (mazeDFS(map, src, dst))
+	{
+		printMap(map);
+	}
+	else
+		cout << "Path not found!" << endl;
+
+	return 0;
+}
+
+bool graphDFS(int graph[V][V], int currNode, int destNode, bool hasVis[V])
+{
+	hasVis[currNode] = true;
+
+	if (currNode == destNode)
+	{
+		cout << currNode << endl;
+		return true;
+	}
+
+	rep(i, V)
+	{
+		if (graph[currNode][i] == true and hasVis[i] == false)
+		{
+			if (graphDFS(graph, i, destNode, hasVis))
+			{
+				cout << currNode << endl;
+				return true;
+			}
+
+		}
+	}
+
+	return false;
+}
+
+int graphmain()
+{
+	int graph[V][V]{};
+	bool hasVis[V]{};
+	int E;
+
+	rep(i, V)
+	{
+		rep(j, V)
+			cout << graph[i][j] << " ";
+		cout << endl;
+	}
+	cout << endl;
+
+	fstream Rdr("graph.txt");
+	int x, y;
+
+	Rdr >> E;
+
+	rep(i, E)
+	{
+		Rdr >> x >> y;
+		graph[x][y] = 1;
+		graph[y][x] = 1;
+	}
+
+	rep(i, V)
+	{
+		rep(j, V)
+			cout << graph[i][j] << " ";
+		cout << endl;
+	}
+	cout << endl;
+
+	if (graphDFS(graph, 0, 4, hasVis) == false)
+	{
+		cout << "Solution not possible!" << endl;
+	}
+
+	return 0;
+}
+
